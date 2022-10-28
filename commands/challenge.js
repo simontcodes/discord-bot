@@ -163,17 +163,10 @@ query questionOfToday {
 // \n\t__typename
 // }`
 
-
-
-
-const requestTestBody = JSON.stringify({ query: oneChallenge })
-
-
-
 const axiosConfig = {headers: { 'Content-Type': 'application/json' }}
+let challenge = "";
 
 // app.use(express.json());
-let challenge = "";
 
 // -------------------------------------------------------------------------------------
 // function getChallenge() {
@@ -188,7 +181,12 @@ let challenge = "";
 // }
 // -------------------------------------------------------------------------------------
 
-
+// const requestTestBody = JSON.stringify({ query: oneChallenge })
+// function getOneChallenge() {
+//   axios.post('https://leetcode.com/graphql', requestTestBody, axiosConfig).then((res) => {
+//     console.log(res.data)
+//   }).catch((error) => {console.log(error)})
+// }
 
 
 function getChallenge() {
@@ -198,14 +196,8 @@ function getChallenge() {
   }).catch((error) => {console.log(error.message)})
 }
 
-function getOneChallenge() {
-  axios.post('https://leetcode.com/graphql', requestTestBody, axiosConfig).then((res) => {
-    console.log(res.data)
-  }).catch((error) => {console.log(error)})
-}
-
 console.log("outside of function");
-console.log(getOneChallenge());
+console.log(getChallenge());
 
 module.exports = {
   data: new SlashCommandBuilder()
