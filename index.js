@@ -1,12 +1,12 @@
 require("dotenv").config();
 const fs = require("node:fs");
 const path = require("node:path");
-const cron = require('cron');
-const axios = require('axios')
+const cron = require("cron");
+const axios = require("axios");
 
 let token = process.env.TOKEN;
-let GUILD_ID = process.env.GUILD
-let CHANNEL_GENERAL = process.env.CHANNEL_GENERAL
+let GUILD_ID = process.env.GUILD;
+let CHANNEL_GENERAL = process.env.CHANNEL_GENERAL;
 
 const {
   Client,
@@ -40,41 +40,42 @@ for (const file of commandFiles) {
 
 let challenge = "";
 function getChallenge() {
-  console.log("here")
+  const challengesFile = fs.readFileSync("commandschallengesId.json");
+  const challengesIDs = JSON.parse(challengesFile);
+  const challengeOfTheDay = challengesIDs.shift();
+
   axios
-    .get(
-      "https://www.codewars.com/api/v1/code-challenges/5277c8a221e209d3f6000b56"
-    )
+    .get(`https://www.codewars.com/api/v1/code-challenges/${challengeOfTheDay}`)
     .then((response) => {
       console.log(response.data.description);
       challenge = response.data.description;
-    }); 
+    });
 }
 
 // When the client is ready, run this code (only once)
 client.once(Events.ClientReady, () => {
   console.log("Ready!");
 
-  let getCodeWarsChallenge = new cron.CronJob('00 00 09 * * 1-5', () => {
-    getChallenge()
-    console.log(challenge)
-  })
+  let getCodeWarsChallenge = new cron.CronJob("00 00 09 * * 1-5", () => {
+    getChallenge();
+    console.log(challenge);
+  });
 
-  let scheduleNoCoding = new cron.CronJob('05 00 09 * * 0,6', () => {
-    const guild = client.guilds.cache.get(GUILD_ID)
+  let scheduleNoCoding = new cron.CronJob("05 00 09 * * 0,6", () => {
+    const guild = client.guilds.cache.get(GUILD_ID);
     const channel = guild.channels.cache.get(CHANNEL_GENERAL);
     channel.send("Go back to sleep, there is no coding challenge today");
-  })
-  
-  let scheduledMessage = new cron.CronJob('05 00 09 * * *', () => {
-    const guild = client.guilds.cache.get(GUILD_ID)
+  });
+
+  let scheduledMessage = new cron.CronJob("05 00 09 * * *", () => {
+    const guild = client.guilds.cache.get(GUILD_ID);
     const channel = guild.channels.cache.get(CHANNEL_GENERAL);
     channel.send(challenge);
   });
 
-  scheduleNoCoding.start()
-  getCodeWarsChallenge.start()
-  scheduledMessage.start()
+  scheduleNoCoding.start();
+  getCodeWarsChallenge.start();
+  scheduledMessage.start();
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
