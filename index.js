@@ -40,9 +40,13 @@ for (const file of commandFiles) {
 
 let challenge = "";
 function getChallenge() {
-  const challengesFile = fs.readFileSync("commandschallengesId.json");
+  const challengesFile = fs.readFileSync("./commands/challengesId.json");
   const challengesIDs = JSON.parse(challengesFile);
   const challengeOfTheDay = challengesIDs.shift();
+  fs.writeFileSync(
+    "./commands/challengesId.json",
+    JSON.stringify(challengesIDs)
+  );
 
   axios
     .get(`https://www.codewars.com/api/v1/code-challenges/${challengeOfTheDay}`)
